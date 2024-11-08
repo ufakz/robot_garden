@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+  <world name="enhanced_garden">
+    
+    <!-- Improved camera position for better view -->
+    <gui>
+      <camera name="user_camera">
+        <pose>-25 -20 15 0 0.5 0.7</pose>
+      </camera>
+    </gui>
+
+    <!-- Enhanced physics -->
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_update_rate>1000</real_time_update_rate>
+      <gravity>0 0 -9.81</gravity>
+    </physics>
+
+    <!-- Enhanced lighting -->
+    <light name="sun" type="directional">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 -0.5 0.5</pose>
+      <diffuse>0.9 0.9 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.5 -1</direction>
+    </light>
+
+    <!-- Ambient light for better atmosphere -->
+    <light name="ambient" type="directional">
+      <cast_shadows>false</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.3 0.3 0.3 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+    </light>
+
+    <!-- Mixed ground material -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="ground_plane_link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>40 40</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="grass">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>40 40</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grass</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Stone pathway -->
+    <model name="pathway">
+      <static>true</static>
+      <pose>0 0 0.01 0 0 0</pose>
+      <link name="path_link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>20 1.5 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Stone</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Multiple trees -->
+    <include>
+      <uri>model://garden_tree</uri>
+      <name>tree1</name>
+      <pose>5 5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://garden_tree</uri>
+      <name>tree2</name>
+      <pose>-3 7 0 0 0 0.5</pose>
+      <scale>1.2 1.2 1.3</scale>
+    </include>
+    <include>
+      <uri>model://garden_tree</uri>
+      <name>tree3</name>
+      <pose>8 -4 0 0 0 1.0</pose>
+      <scale>0.8 0.8 0.9</scale>
+    </include>
+
+    <!-- Multiple flowers -->
+    <include>
+      <uri>model://garden_flower</uri>
+      <name>flower1</name>
+      <pose>2 3 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://garden_flower</uri>
+      <name>flower2</name>
+      <pose>-2 4 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://garden_flower</uri>
+      <name>flower3</name>
+      <pose>4 -2 0 0 0 0</pose>
+    </include>
+
+    <!-- Enhanced bench with backrest -->
+    <include>
+      <uri>model://garden_bench</uri>
+      <name>bench1</name>
+      <pose>-4 -4 0 0 0 1.57</pose>
+    </include>
+
+    <!-- Decorative rocks -->
+    <model name="rock_cluster">
+      <static>true</static>
+      <pose>3 -3 0 0 0 0</pose>
+      <link name="rocks">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+              <uri>model://rock_cluster/meshes/rocks.dae</uri>
+              <scale>0.5 0.5 0.5</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1.0</ambient>
+            <diffuse>0.5 0.5 0.5 1.0</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>

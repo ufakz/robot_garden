@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+  <model name="garden_flower">
+    <static>true</static>
+    <link name="flower">
+      <visual name="petals">
+        <geometry>
+          <sphere>
+            <radius>0.1</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1.0 0.2 0.2 1.0</ambient>
+          <diffuse>1.0 0.2 0.2 1.0</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

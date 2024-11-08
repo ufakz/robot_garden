@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="world_file" default="$(find p3at_gazebo)/worlds/garden2.world"/>
+  <node name="gazebo" pkg="gazebo_ros" type="gzserver" args="$(arg world_file)" respawn="false" output="screen"/>
+  <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen"/>
+</launch>
