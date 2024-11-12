@@ -16,6 +16,6 @@
 
 <node pkg="gazebo_ros" type="spawn_model" name="spawn_model" args="-urdf -param /robot_description -model pioneer3at"/>
 
-<node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher"/>
+<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
 
 </launch>
