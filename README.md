@@ -8,7 +8,7 @@
 - **Irving Perez** - Simulation and Modeling Expert
 - **Joaquin Caballero** - Project Manager
 - **Jose David Perez** - Documentation and Presentation Lead
-- **Umar Faruk Abdullahi** - Control Engineer
+- **Umar Faruk Abdullahi** - Control Lead
 
 ## Installation
 
