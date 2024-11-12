@@ -42,7 +42,16 @@ Make sure ROS Noetic is installed before proceeding. Refer to the official ROS i
     git clone https://github.com/ufakz/robot_garden
     ```
 
-3. **Build the workspace**  
+3. **Copy model files**  
+   Copy models from [`p3at_gazebo/models`](p3at_gazebo/models) folder to your local gazebo folder located at `~/home/.gazebo/models`:
+
+   ```bash
+   cp robot_garden/p3at_gazebo/models ~/home/.gazebo/models
+   ```
+
+   Alternatively, you can create a symbolic link.
+
+4. **Build the workspace**  
    Build and install the project packages from the `robot_garden` directory:
 
     ```bash
@@ -50,23 +59,23 @@ Make sure ROS Noetic is installed before proceeding. Refer to the official ROS i
     catkin_make install
     ```
 
-4. **Start the ROS Core**  
+5. **Start the ROS Core**  
    In a terminal, start the ROS core:
 
     ```bash
     roscore
     ```
 
-5. **Run Gazebo**  
+6. **Run Gazebo**  
    Launch Gazebo with the robot's environment configuration:
 
     ```bash
     cd ~/robot_garden
     source install/setup.bash
-    roslaunch p3at_description p3at.launch
+    roslaunch p3at_description garden_world.launch
     ```
 
-6. **Launch the control node**  
+7. **Launch the control node**  
    In a separate terminal, run the control node for the robot:
 
     ```bash
@@ -85,7 +94,7 @@ Below are the major milestones for the **Robot Garden** project. This checklist 
 
 - [x] **Define Application and Environment** - Established the scope, functionality, and the basic environmental model for the robot.
 - [x] **Setup Simulation** - Configured Gazebo simulation environment and robot models.
-- [ ] **Design Environment** - Develop a more realistic and detailed simulation environment.
+- [x] **Design Environment** - Develop a more realistic and detailed simulation environment.
 - [ ] **Design Water Spray** - Implement a water spray mechanism for the robot.
 - [ ] **Final Robot Model** - Complete design of the robot model with final adjustments and additions.
 - [ ] **Waypoint Following Control** - Implement a control system for the robot to follow a series of waypoints.
