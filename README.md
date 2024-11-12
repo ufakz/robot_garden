@@ -79,7 +79,7 @@ Make sure ROS Noetic is installed before proceeding. Refer to the official ROS i
    In a separate terminal, run the control node for the robot:
 
     ```bash
-    cd ~/pioneer3at_ws
+    cd ~/robot_garden
     source install/setup.bash
     rosrun p3at_plugin p3at
     ```
