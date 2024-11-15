@@ -79,9 +79,9 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Found " << flowerPotLocations.size() << " flower pot(s)" << std::endl;
 
-    // for (const auto& location : flowerPotLocations) {
-    //     std::cout << "Flower pot location: (" << location.first << ", " << location.second << ")" << std::endl;
-    // }
+    for (const auto& location : flowerPotLocations) {
+         std::cout << "Flower pot location: (" << location.first << ", " << location.second << ")" << std::endl;
+    }
 
     return 0;
 }

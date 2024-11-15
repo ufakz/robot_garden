@@ -7,7 +7,7 @@
   <arg name="spawn_z" default="0.169994"/>
   <arg name="spawn_roll" default="0.000035"/>
   <arg name="spawn_pitch" default="0"/>
-  <arg name="spawn_yaw" default="1.49442"/>
+  <arg name="spawn_yaw" default="4.71"/>
 
 
   <node name="gazebo" pkg="gazebo_ros" type="gzserver" args="$(arg world_file)" respawn="false" output="screen"/>
