@@ -24,6 +24,7 @@ private:
         TURNING,
         MOVING_FORWARD
     };
+    
     AvoidanceState avoidance_state_;
     ros::Time avoidance_start_time_;
     const double TURN_DURATION = 4.0;   
@@ -59,8 +60,8 @@ private:
     const double ANGULAR_SPEED = 0.6;
     const double WAYPOINT_IGNORE_RADIUS = 2.0;
 
-    const double OBSTACLE_DISTANCE = 0.5;    // Detect obstacles 1 meter ahead
-    const double CHECK_AHEAD_DISTANCE = 0.2;  // Look further ahead
+    const double OBSTACLE_DISTANCE = 0.5;    // Detect obstacles 0.5 meter ahead
+    //const double CHECK_AHEAD_DISTANCE = 0.2;  // Look further ahead
     const int FRONT_RAYS = 30;               // Number of rays to check in front
     const double MAX_TURN_SPEED = 0.5;
     const double MIN_TURN_SPEED = 0.3;  
@@ -86,28 +87,24 @@ public:
     std::vector<std::pair<float, float>> getFlowerPotLocations(const std::string& filePath) {
         std::vector<std::pair<float, float>> flowerPotLocations;
         
-        // Get the root document
         tinyxml2::XMLDocument doc;
         if (doc.LoadFile(filePath.c_str()) != tinyxml2::XMLError::XML_SUCCESS) {
             std::cerr << "Error parsing the XML file." << std::endl;
             return flowerPotLocations;
         }
 
-        // Start from the root
         tinyxml2::XMLElement* sdf = doc.RootElement();
         if (!sdf) {
             std::cerr << "Cannot find sdf element." << std::endl;
             return flowerPotLocations;
         }
 
-        // Get the first child "world"
         tinyxml2::XMLElement* world = sdf->FirstChildElement("world");
         if (!world) {
             std::cerr << "Cannot find world element." << std::endl;
             return flowerPotLocations;
         }
 
-        // Get the second child "state"
         tinyxml2::XMLElement* state = world->FirstChildElement("state");
         if (!state) {
             std::cerr << "Cannot find state element." << std::endl;
@@ -143,16 +140,6 @@ public:
         return flowerPotLocations;
     }
 
-    // void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
-    //     // Store laser readings
-    //     laser_ranges_ = msg->ranges;
-        
-    //     // Debug print - first and last readings
-    //     if (!laser_ranges_.empty()) {
-    //         ROS_DEBUG("First laser reading: %.2f, Last laser reading: %.2f",
-    //                  laser_ranges_.front(), laser_ranges_.back());
-    //     }
-    // }
 
     bool isPathClear() {
         // Check if path is clear in the direction of movement
@@ -193,7 +180,6 @@ public:
 
         double angle_to_goal = std::atan2(goal_y - current_y_, goal_x - current_x_) - current_yaw_;
         
-        // Normalize angle to [-π, π]
         angle_to_goal = std::atan2(std::sin(angle_to_goal), std::cos(angle_to_goal));
 
         double turn_left_diff = std::abs(angle_to_goal - (obstacle_angle + M_PI/2));
