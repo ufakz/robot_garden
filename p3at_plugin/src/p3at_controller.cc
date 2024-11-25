@@ -61,7 +61,7 @@ private:
     const double WAYPOINT_IGNORE_RADIUS = 2.0;
 
     const double OBSTACLE_DISTANCE = 0.5;    // Detect obstacles 0.5 meter ahead
-    //const double CHECK_AHEAD_DISTANCE = 0.2;  // Look further ahead
+    const double CHECK_AHEAD_DISTANCE = 0.2;  // Look further ahead
     const int FRONT_RAYS = 30;               // Number of rays to check in front
     const double MAX_TURN_SPEED = 0.5;
     const double MIN_TURN_SPEED = 0.3;  
