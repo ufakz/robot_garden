@@ -23,6 +23,12 @@ This project requires ROS Noetic on Ubuntu 20.04. Follow the steps below to set 
 
 Make sure ROS Noetic is installed before proceeding. Refer to the official ROS installation guide for Ubuntu 20.04: [Ubuntu ROS Noetic Installation](https://wiki.ros.org/noetic/Installation/Ubuntu). Ensure that you install the full version (`ros-noetic-desktop-full`), which includes the necessary tools for simulation and visualization.
 
+Additionally, download navigation package for path planning
+
+```bash
+sudo apt install ros-neotic-navigation
+```
+
 ### Workspace Setup
 
 1. **Create the catkin workspace**  
@@ -43,10 +49,10 @@ Make sure ROS Noetic is installed before proceeding. Refer to the official ROS i
     ```
 
 3. **Copy model files**  
-   Copy models from [`p3at_gazebo/models`](p3at_gazebo/models) folder to your local gazebo folder located at `~/home/.gazebo/models`:
+   Copy models from [`p3at_gazebo/models`](p3at_gazebo/models) folder to your local gazebo folder located at `~/.gazebo/models`:
 
    ```bash
-   cp robot_garden/p3at_gazebo/models ~/home/.gazebo/models
+   cp robot_garden/p3at_gazebo/models ~/.gazebo/models
    ```
 
    Alternatively, you can create a symbolic link.
@@ -83,6 +89,14 @@ Make sure ROS Noetic is installed before proceeding. Refer to the official ROS i
     source install/setup.bash
     rosrun p3at_plugin p3at
     ```
+
+8. **AMCL with move_base**
+
+   To run environment with AMCL and move_base packages:
+
+   ```bash
+   roslaunch p3at_description amcl_move_base.launch
+   ```
 
 ### Troubleshooting
 
