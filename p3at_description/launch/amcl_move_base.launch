@@ -1,0 +1,13 @@
+<launch>
+  <!-- Set use_sim_time -->
+  <param name="use_sim_time" value="true"/>
+
+  <!-- Launch Custom Setup -->
+  <include file="$(find p3at_description)/launch/garden_world_mapping.launch"/>
+
+  <!-- Launch AMCL -->
+  <include file="$(find p3at_description)/launch/amcl.launch"/>
+
+  <!-- Launch Move Base -->
+  <include file="$(find p3at_description)/launch/move_base.launch"/>
+</launch>

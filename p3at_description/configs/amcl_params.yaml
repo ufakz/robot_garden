@@ -1,0 +1,12 @@
+amcl:
+  min_particles: 500
+  max_particles: 2000
+  kld_err: 0.05
+  kld_z: 0.99
+  update_min_d: 0.2
+  update_min_a: 0.2
+  resample_interval: 1
+  transform_tolerance: 0.1
+  recovery_alpha_slow: 0.001
+  recovery_alpha_fast: 0.1
+  laser_lambda_short: 0.1

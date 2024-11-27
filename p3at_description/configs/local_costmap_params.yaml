@@ -1,0 +1,7 @@
+local_costmap:
+  global_frame: odom
+  update_frequency: 10.0
+  publish_frequency: 5.0
+  rolling_window: true
+  width: 5.0
+  height: 5.0

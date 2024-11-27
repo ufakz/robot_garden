@@ -1,0 +1,14 @@
+bstacle_range: 2.5
+raytrace_range: 3.0
+footprint: [[-0.3, -0.3], [-0.3, 0.3], [0.3, 0.3], [0.3, -0.3]] # Robot footprint
+robot_radius: 0.3
+inflation_radius: 0.6
+observation_sources: laser_scan
+base_frame_id: base_footprint
+robot_base_frame: base_footprint
+
+laser_scan: 
+  data_type: LaserScan
+  topic: hokuyo
+  marking: true
+  clearing: true

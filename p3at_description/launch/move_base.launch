@@ -1,0 +1,9 @@
+<launch>
+  <param name="use_sim_time" value="true"/>
+  <node pkg="move_base" type="move_base" name="move_base" output="screen">
+    <rosparam file="$(find p3at_description)/configs/costmap_common_params.yaml" command="load"/>
+    <rosparam file="$(find p3at_description)/configs/global_costmap_params.yaml" command="load" ns="global_costmap"/>
+    <rosparam file="$(find p3at_description)/configs/local_costmap_params.yaml" command="load" ns="local_costmap"/>
+    <rosparam file="$(find p3at_description)/configs/base_local_planner_params.yaml" command="load"/>
+  </node>
+</launch>
