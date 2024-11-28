@@ -47,7 +47,7 @@ private:
 
     std::vector<std::pair<float, float>> points = {
             {-2.0f, -5.0f},
-            {-8.0f, -5.0f},
+            {-8.0f, -4.5f},
             {-5.0f, -2.75f},
             {-7.0f, 0.0f},
             {-7.5f, 2.0f}
@@ -340,8 +340,10 @@ public:
             cmd_vel.angular.z = 0.2 * angle;
         }
         else {
-            current_waypoint_++;
+            
             ROS_INFO("Reached waypoint %lu", current_waypoint_);
+
+            current_waypoint_++;
             return false;
         }
 

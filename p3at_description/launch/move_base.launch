@@ -1,9 +1,18 @@
 <launch>
   <param name="use_sim_time" value="true"/>
+  <arg name="base_global_planner" default="navfn/NavfnROS"/>
+  <arg name="base_local_planner" default="base_local_planner/TrajectoryPlannerROS"/>
+
   <node pkg="move_base" type="move_base" name="move_base" output="screen">
-    <rosparam file="$(find p3at_description)/configs/costmap_common_params.yaml" command="load"/>
-    <rosparam file="$(find p3at_description)/configs/global_costmap_params.yaml" command="load" ns="global_costmap"/>
-    <rosparam file="$(find p3at_description)/configs/local_costmap_params.yaml" command="load" ns="local_costmap"/>
-    <rosparam file="$(find p3at_description)/configs/base_local_planner_params.yaml" command="load"/>
+    <param name="base_global_planner" value="$(arg base_global_planner)"/>
+    <param name="base_local_planner" value="$(arg base_local_planner)"/>  
+    <param name="recovery_behavior_enabled" value="true"/>
+    <param name="controller_frequency" value="1.0"/>
+
+    <rosparam file="$(find p3at_description)/configs/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find p3at_description)/configs/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find p3at_description)/configs/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find p3at_description)/configs/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find p3at_description)/configs/base_local_planner_params.yaml" command="load" />
   </node>
 </launch>

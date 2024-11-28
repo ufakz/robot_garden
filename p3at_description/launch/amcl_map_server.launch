@@ -1,8 +1,9 @@
 <launch>
-
+  <include file = "$(find p3at_description)/launch/provide_map.launch" />
+  
   <arg name="use_map_topic" default="true"/>
-  <arg name="scan_topic" default="hokuyo" />
-​
+  <arg name="scan_topic"  default="hokuyo"/>
+
   <param name="use_sim_time" value="true"/>
   <node pkg="amcl" type="amcl" name="amcl">
     <param name="use_map_topic" value="$(arg use_map_topic)"/>
@@ -36,14 +37,12 @@
     <param name="base_frame_id" value="base_footprint"/>
     <param name="resample_interval" value="1"/>
     <!-- Increase tolerance because the computer can get quite busy -->
-    <param name="transform_tolerance" value="2.0"/>
+    <param name="transform_tolerance" value="1.0"/>
     <param name="recovery_alpha_slow" value="0.0"/>
     <param name="recovery_alpha_fast" value="0.0"/>
     <param name="initial_pose_x" value="-5.00796"/> 
     <param name="initial_pose_y" value="2.33341"/>
     <param name="initial_pose_a" value="4.71"/>
-    <remap from="scan" to="$(arg scan_topic)"/>    
+    <remap from="scan" to="$(arg scan_topic)"/>
   </node>
-
-
 </launch>

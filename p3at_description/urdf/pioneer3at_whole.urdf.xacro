@@ -240,7 +240,7 @@
           <plugin name="gazebo_ros_hokuyo_controller" filename="libgazebo_ros_laser.so">
             <gaussianNoise>0.005</gaussianNoise>
             <alwaysOn>true</alwaysOn>
-            <updateRate>30</updateRate>
+            <updateRate>40</updateRate>
             <topicName>hokuyo</topicName>
             <frameName>hokuyo_frame</frameName>
           </plugin>
