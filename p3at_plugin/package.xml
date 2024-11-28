@@ -9,10 +9,17 @@
   <license>Apache 2.0</license>
   <maintainer email="nate@osrfoundation.org">Nate Koenig</maintainer>
   <buildtool_depend>catkin</buildtool_depend>
-  <buildtool_depend>roscpp</buildtool_depend>
-  <buildtool_depend>geometry_msgs</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>move_base_msgs</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>nav_msgs</build_depend>
+
   <run_depend>urdf</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>xacro</run_depend>
+  <run_depend>move_base_msgs</run_depend>
+  <run_depend>actionlib</run_depend>
+  <run_depend>nav_msgs</run_depend>
 </package>
