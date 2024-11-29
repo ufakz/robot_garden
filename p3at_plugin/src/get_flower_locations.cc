@@ -66,22 +66,22 @@ std::vector<std::pair<float, float>> getFlowerPotLocations(const std::string& fi
     return flowerPotLocations;
 }
 
-int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <world_model_file_path>" << std::endl;
-        return 1;
-    }
+// int main(int argc, char* argv[]) {
+//     if (argc < 2) {
+//         std::cerr << "Usage: " << argv[0] << " <world_model_file_path>" << std::endl;
+//         return 1;
+//     }
 
-    std::string filePath = argv[1];
-    std::cout << "Processing file: " << filePath << std::endl;
+//     std::string filePath = argv[1];
+//     std::cout << "Processing file: " << filePath << std::endl;
     
-    std::vector<std::pair<float, float>> flowerPotLocations = getFlowerPotLocations(filePath);
+//     std::vector<std::pair<float, float>> flowerPotLocations = getFlowerPotLocations(filePath);
 
-    std::cout << "Found " << flowerPotLocations.size() << " flower pot(s)" << std::endl;
+//     std::cout << "Found " << flowerPotLocations.size() << " flower pot(s)" << std::endl;
 
-    for (const auto& location : flowerPotLocations) {
-         std::cout << "Flower pot location: (" << location.first << ", " << location.second << ")" << std::endl;
-    }
+//     for (const auto& location : flowerPotLocations) {
+//          std::cout << "Flower pot location: (" << location.first << ", " << location.second << ")" << std::endl;
+//     }
 
-    return 0;
-}
+//     return 0;
+// }

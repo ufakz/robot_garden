@@ -1,6 +1,6 @@
-// flower_pot_extractor.h
-#ifndef FLOWER_POT_EXTRACTOR_H
-#define FLOWER_POT_EXTRACTOR_H
+// flower_pot_locations.h
+#ifndef GET_FLOWER_LOCATIONS_H
+#define GET_FLOWER_LOCATIONS_H
 
 #include <string>
 #include <vector>
