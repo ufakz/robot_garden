@@ -32,7 +32,7 @@ include_directories(
   )
 
 ## Declare a cpp executable (our new controller)
-add_executable(p3at src/p3at_controller.cc)
+add_executable(p3at src/p3at_controller_movebase.cc)
 add_executable(p3at_path_planning src/p3at_path_planning.cc src/get_flower_locations.cc)
 target_link_libraries(p3at ${catkin_LIBRARIES} tinyxml2)
 target_link_libraries(p3at_path_planning ${catkin_LIBRARIES} tinyxml2 ${roslib_LIBRARIES})

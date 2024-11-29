@@ -12,6 +12,16 @@
 #include <fstream>
 #include <tinyxml2.h>
 
+#include <ros/package.h>
+#include <move_base_msgs/MoveBaseAction.h>
+#include <actionlib/client/simple_action_client.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <nav_msgs/Path.h>
+#include <nav_msgs/GetPlan.h>
+#include <geometry_msgs/Twist.h>
+#include <vector>
+#include <tf/transform_listener.h>
+
 class RobotController {
 private:
     ros::NodeHandle nh_;
@@ -24,11 +34,21 @@ private:
         TURNING,
         MOVING_FORWARD
     };
+
+    // save the pose pairs
+    std::vector<std::pair<geometry_msgs::Pose, geometry_msgs::Pose>> pose_pairs;
+
+    // paths to follow
+    std::vector<nav_msgs::Path> paths;
+
+    // Get the robot's current position as the first start
+    geometry_msgs::Pose current_pose;
+
     
     AvoidanceState avoidance_state_;
     ros::Time avoidance_start_time_;
     const double TURN_DURATION = 4.0;   
-    const double FORWARD_DURATION = 5.0;
+    const double FORWARD_DURATION = 6.0;
 
     std::vector<std::pair<float, float>> waypoints_;
     size_t current_waypoint_;
@@ -46,10 +66,10 @@ private:
     std::vector<float> laser_ranges_;
 
     std::vector<std::pair<float, float>> points = {
-            {-3.0f, -2.0f},
-            {-2.0f, -3.0f},
-            {-3.0f, -4.5f},
-            {-4.0f, -3.0f},
+            {-2.5f, -2.0f},
+            {-1.5f, -3.0f},
+            {-3.0f, -5.0f},
+            {-8.0f, -5.0f},
             {-7.0f, -3.5f},
             {-7.0f, 0.0f},
             {-7.5f, 2.0f}
@@ -64,13 +84,22 @@ private:
 
     const double OBSTACLE_DISTANCE = 0.5;    // Detect obstacles 0.5 meter ahead
     const double CHECK_AHEAD_DISTANCE = 0.2;  // Look further ahead
-    const int FRONT_RAYS = 30;               // Number of rays to check in front
+    const int FRONT_RAYS = 10;               // Number of rays to check in front
     const double MAX_TURN_SPEED = 0.5;
     const double MIN_TURN_SPEED = 0.3;  
-    double obstacle_angle_;             
+    double obstacle_angle_;           
+
+    // Add new members for path following
+    size_t current_path_index_;
+    size_t current_pose_index_;
+    
+    // Modified parameters for path following
+    const double PATH_POSE_THRESHOLD = 0.3;  // Distance threshold for reaching path poses
+    const double PATH_ANGULAR_THRESHOLD = 0.4;  // Angular threshold for path poses
+  
 
 public:
-    RobotController() : current_waypoint_(0), pose_initialized_(false), avoidance_state_(NONE) {
+    RobotController() : current_waypoint_(0), current_path_index_(0), current_pose_index_(0), pose_initialized_(false), avoidance_state_(NONE) {
         cmd_vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
         odom_sub_ = nh_.subscribe("/odom", 1000, &RobotController::odomCallback, this);
         laser_sub_ = nh_.subscribe("/hokuyo", 1000, &RobotController::laserCallback, this);
@@ -83,7 +112,70 @@ public:
         
         //std::reverse(waypoints_.begin(), waypoints_.end());
         
-        ROS_INFO("Loaded %lu waypoints", waypoints_.size());
+        ROS_INFO("Loaded %lu flower locations", waypoints_.size());
+
+        tf::TransformListener listener;
+        tf::StampedTransform transform;
+
+        try
+        {
+            listener.waitForTransform("map", "base_footprint", ros::Time(0), ros::Duration(10.0));
+            listener.lookupTransform("map", "base_footprint", ros::Time(0), transform);
+
+            current_pose.position.x = transform.getOrigin().x();
+            current_pose.position.y = transform.getOrigin().y();
+            current_pose.position.z = transform.getOrigin().z();
+            current_pose.orientation.x = transform.getRotation().x();
+            current_pose.orientation.y = transform.getRotation().y();
+            current_pose.orientation.z = transform.getRotation().z();
+            current_pose.orientation.w = transform.getRotation().w();
+        }
+        catch (tf::TransformException &ex)
+        {
+            ROS_ERROR("%s", ex.what());
+            ros::Duration(1.0).sleep();
+        }
+
+        // Use current_pose as the start for the first goal
+        geometry_msgs::Pose start_pose = current_pose;
+
+        for (const auto& location : points)
+        {
+            geometry_msgs::Pose goal_pose;
+            goal_pose.position.x = location.first;
+            goal_pose.position.y = location.second;
+            goal_pose.position.z = 0.0; // Assuming flat ground, adjust if necessary
+
+            // Add the start and goal pair to the list
+            pose_pairs.push_back({start_pose, goal_pose});
+
+            // Update start_pose for the next goal
+            start_pose = goal_pose;
+        }
+
+        // First, compute all paths and smooth them
+        for (const auto& pose_pair : pose_pairs)
+        {
+            const auto& start = pose_pair.first;
+            const auto& goal = pose_pair.second;
+
+            // Plan the path with Move Base
+            nav_msgs::Path global_path = planPathWithMoveBase(start, goal);
+
+            if (!global_path.poses.empty()) {  // Smooth the path if it's valid
+                // Smooth the path using a custom smoothing function
+                // nav_msgs::Path smoothed_path = smoothPath(global_path);
+                paths.push_back(global_path);
+            }
+            else {
+                ROS_ERROR("Failed to plan a path from (%f, %f) to (%f, %f)", start.position.x, start.position.y, goal.position.x, goal.position.y);
+            }
+        }
+
+        ROS_INFO("Planned %lu paths with total waypoints:", paths.size());
+        for (size_t i = 0; i < paths.size(); i++) {
+            ROS_INFO("Path %lu has %lu poses", i, paths[i].poses.size());
+        }
     }
 
     std::vector<std::pair<float, float>> getFlowerPotLocations(const std::string& filePath) {
@@ -142,21 +234,66 @@ public:
         return flowerPotLocations;
     }
 
+    // Function to plan a path using Move Base's make_plan service
+    nav_msgs::Path planPathWithMoveBase(const geometry_msgs::Pose& start, const geometry_msgs::Pose& goal)
+    {
+        ros::NodeHandle nh;
+        // Use simulated time
+        nh.setParam("use_sim_time", true);
+        ros::ServiceClient make_plan_client = nh.serviceClient<nav_msgs::GetPlan>("/move_base/make_plan");
+        make_plan_client.waitForExistence();
 
-    bool isPathClear() {
-        // Check if path is clear in the direction of movement
-        if (laser_ranges_.empty()) return false;
-        
-        int center = laser_ranges_.size() / 2;
-        int start = center - FRONT_RAYS/2;
-        int end = center + FRONT_RAYS/2;
-        
-        for (int i = start; i < end; i++) {
-            if (laser_ranges_[i] < CHECK_AHEAD_DISTANCE && laser_ranges_[i] > 0.0) {
-                return false;
+        nav_msgs::GetPlan srv;
+        srv.request.start.header.frame_id = "map";
+        srv.request.start.header.stamp = ros::Time::now();
+        srv.request.start.pose = start;
+
+        srv.request.goal.header.frame_id = "map";
+        srv.request.goal.header.stamp = ros::Time::now();
+        srv.request.goal.pose = goal;
+
+        srv.request.tolerance = 0.0; // Set tolerance as needed
+
+        nav_msgs::Path planned_path;
+        if (make_plan_client.call(srv)) {
+            ROS_INFO("Received plan with %lu waypoints", srv.response.plan.poses.size());
+            // You can process the plan here, e.g., print the waypoints
+            for (size_t i = 0; i < srv.response.plan.poses.size(); ++i) {
+                ROS_INFO("Waypoint %lu: x=%.2f, y=%.2f", i, 
+                        srv.response.plan.poses[i].pose.position.x,
+                        srv.response.plan.poses[i].pose.position.y);
             }
+            planned_path = srv.response.plan;
+        } else {
+            ROS_ERROR("Failed to call service make_plan");
         }
-        return true;
+
+        return planned_path;
+    }
+
+    void sendGoal(const geometry_msgs::Point& position, const geometry_msgs::Quaternion& orientation) {
+        move_base_msgs::MoveBaseGoal goal;
+        
+        // Set up the frame parameters
+        goal.target_pose.header.frame_id = "map";
+        goal.target_pose.header.stamp = ros::Time::now();
+        
+        // Set the position
+        goal.target_pose.pose.position = position;
+        goal.target_pose.pose.orientation = orientation;
+        
+        ROS_INFO("Sending goal: x=%f, y=%f", position.x, position.y);
+        ac_->sendGoal(goal);
+    }
+
+    void skipNearbyWaypoint() {
+        if (current_waypoint_ < waypoints_.size()) {
+            if (isNearWaypoint(waypoints_[current_waypoint_].first, 
+                             waypoints_[current_waypoint_].second)) {
+                ROS_INFO("Skipping waypoint %lu as it's too close", current_waypoint_);
+                current_waypoint_++;
+            } 
+        }
     }
 
     bool isNearWaypoint(double x, double y) {
@@ -276,26 +413,28 @@ public:
     }
 
     bool moveToNextWaypoint() {
-        if (current_waypoint_ >= points.size()) {
+        ROS_INFO("In Moving to Waypoint first time, paths size %lu", paths.size());
+        if (current_path_index_ >= paths.size()) {
+            ROS_INFO("All paths completed");
             return true;
         }
 
+        // Get current path and pose
+        const nav_msgs::Path& current_path = paths[current_path_index_];
+        
+        if (current_pose_index_ >= current_path.poses.size()) {
+            // Move to next path
+            current_path_index_++;
+            current_pose_index_ = 0;
+            ROS_INFO("Moving to next path: %lu", current_path_index_);
+            return moveToNextWaypoint();  // Recursive call to handle next path
+        }
+
         geometry_msgs::Twist cmd_vel;
-
-        // First, always check for obstacles
-        // if (!isPathClear() && avoidance_state_ == NONE) {
-        //     avoidance_state_ = TURNING;
-        //     avoidance_start_time_ = ros::Time::now();
-        //     ROS_INFO("Obstacle detected, starting avoidance");
-        //     cmd_vel_pub_.publish(geometry_msgs::Twist());
-        //     return false;
-        // }
-
         
         // Handle obstacle avoidance sequence
         if (avoidance_state_ != NONE) {
             double elapsed_time = (ros::Time::now() - avoidance_start_time_).toSec();
-
             if (avoidance_state_ == TURNING) {
                 if (elapsed_time < TURN_DURATION) {
                     double angle_factor = std::abs(std::cos(obstacle_angle_));
@@ -319,36 +458,61 @@ public:
                 } else {
                     avoidance_state_ = NONE;
                     ROS_INFO("Obstacle avoidance complete");
+                    // Don't return here - continue with normal path following
                 }
             }
-
             cmd_vel_pub_.publish(cmd_vel);
-            return false;
+            if (avoidance_state_ != NONE) {
+                return false;  // Only return if still avoiding
+            }
         }
 
-        ROS_INFO("Following waypoint");
-
-        double goal_x = points[current_waypoint_].first;
-        double goal_y = points[current_waypoint_].second;
+        const geometry_msgs::PoseStamped& target_pose = current_path.poses[current_pose_index_];
+        
+        double goal_x = target_pose.pose.position.x;
+        double goal_y = target_pose.pose.position.y;
+        
+        // Calculate target yaw from quaternion
+        tf::Quaternion q(
+            target_pose.pose.orientation.x,
+            target_pose.pose.orientation.y,
+            target_pose.pose.orientation.z,
+            target_pose.pose.orientation.w);
+        tf::Matrix3x3 m(q);
+        double roll, pitch, target_yaw;
+        m.getRPY(roll, pitch, target_yaw);
+        
+        ROS_INFO("Following path %lu, pose %lu", 
+                current_path_index_, current_pose_index_);  // Add current position logging
         
         double distance = getDistanceToGoal(goal_x, goal_y);
         double angle = getAngleToGoal(goal_x, goal_y);
-
-        if (std::abs(angle) > ANGULAR_THRESHOLD) {
+        
+        ROS_INFO("Distance to goal: %f, Angle to goal: %f", distance, angle);  // Add debug info
+        
+        // Follow the path pose
+        if (std::abs(angle) > PATH_ANGULAR_THRESHOLD) {
+            // Turn towards the target pose
             cmd_vel.angular.z = angle > 0 ? ANGULAR_SPEED : -ANGULAR_SPEED;
+            ROS_INFO("Turning with angular velocity: %f", cmd_vel.angular.z);
         }
-        else if (distance > DISTANCE_THRESHOLD) {
+        else if (distance > PATH_POSE_THRESHOLD) {
+            // Move towards the target pose
             cmd_vel.linear.x = LINEAR_SPEED;
-            cmd_vel.angular.z = 0.2 * angle;
+            cmd_vel.angular.z = 0.2 * angle;  // Proportional control for orientation
+            ROS_INFO("Moving with linear velocity: %f, angular correction: %f", 
+                    cmd_vel.linear.x, cmd_vel.angular.z);
         }
         else {
-            
-            ROS_INFO("Reached waypoint %lu", current_waypoint_);
-
-            current_waypoint_++;
+            // Reached current pose in the path
+            ROS_INFO("Reached pose %lu in path %lu", current_pose_index_, current_path_index_);
+            current_pose_index_++;
+            cmd_vel.linear.x = 0.0;  // Stop the robot
+            cmd_vel.angular.z = 0.0;
+            cmd_vel_pub_.publish(cmd_vel);
             return false;
         }
-
+        
         cmd_vel_pub_.publish(cmd_vel);
         return false;
     }
