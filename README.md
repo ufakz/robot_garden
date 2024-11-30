@@ -109,12 +109,12 @@ Below are the major milestones for the **Robot Garden** project. This checklist 
 - [x] **Define Application and Environment** - Established the scope, functionality, and the basic environmental model for the robot.
 - [x] **Setup Simulation** - Configured Gazebo simulation environment and robot models.
 - [x] **Design Environment** - Develop a more realistic and detailed simulation environment.
-- [ ] **Design Water Spray** - Implement a water spray mechanism for the robot.
-- [ ] **Final Robot Model** - Complete design of the robot model with final adjustments and additions.
-- [ ] **Waypoint Following Control** - Implement a control system for the robot to follow a series of waypoints.
-- [ ] **Path Following** - Develop a path-following algorithm for continuous navigation.
-- [ ] **Final Integration** - Integrate all components for a fully functional system.
-- [ ] **Documentation** - Finalize and polish the documentation to ensure ease of use and understanding.
+- [x] **Design Water Spray** - Implement a water spray mechanism for the robot.
+- [x] **Final Robot Model** - Complete design of the robot model with final adjustments and additions.
+- [x] **Waypoint Following Control** - Implement a control system for the robot to follow a series of waypoints.
+- [x] **Path Following** - Develop a path-following algorithm for continuous navigation.
+- [x] **Final Integration** - Integrate all components for a fully functional system.
+- [x] **Documentation** - Finalize and polish the documentation to ensure ease of use and understanding.
 
 ## How to Contribute
 
