@@ -370,9 +370,6 @@ public:
             ros::spinOnce();
             rate.sleep();
         }
-        
-        // geometry_msgs::Twist cmd_vel;
-        // cmd_vel_pub_.publish(cmd_vel);
     }
 };
 
