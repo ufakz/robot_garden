@@ -21,6 +21,7 @@
 #include <geometry_msgs/Twist.h>
 #include <vector>
 #include <tf/transform_listener.h>
+#include "get_flower_locations.h"
 
 class RobotController {
 private:
@@ -210,29 +211,6 @@ public:
 
     }
 
-    // // Add new helper function to sample poses from a path
-    // nav_msgs::Path samplePath(const nav_msgs::Path& original_path) {
-    //     nav_msgs::Path sampled_path;
-    //     sampled_path.header = original_path.header;
-        
-    //     if (original_path.poses.size() <= NUM_SAMPLES) {
-    //         return original_path;  // Return original if it has fewer poses than needed
-    //     }
-
-    //     // Calculate the stride for even sampling
-    //     double stride = static_cast<double>(original_path.poses.size() - 1) / (NUM_SAMPLES - 1);
-        
-    //     for (size_t i = 0; i < NUM_SAMPLES; i++) {
-    //         size_t index = static_cast<size_t>(i * stride);
-    //         if (i == NUM_SAMPLES - 1) {
-    //             index = original_path.poses.size() - 1;  // Ensure we get the last pose
-    //         }
-    //         sampled_path.poses.push_back(original_path.poses[index]);
-    //     }
-
-    //     return sampled_path;
-    // }
-
     nav_msgs::Path samplePath(const nav_msgs::Path& original_path) {
         
         nav_msgs::Path sampled_path;
@@ -273,62 +251,6 @@ public:
         }
 
         return sampled_path;
-    }
-
-    std::vector<std::pair<float, float>> getFlowerPotLocations(const std::string& filePath) {
-        std::vector<std::pair<float, float>> flowerPotLocations;
-        
-        tinyxml2::XMLDocument doc;
-        if (doc.LoadFile(filePath.c_str()) != tinyxml2::XMLError::XML_SUCCESS) {
-            std::cerr << "Error parsing the XML file." << std::endl;
-            return flowerPotLocations;
-        }
-
-        tinyxml2::XMLElement* sdf = doc.RootElement();
-        if (!sdf) {
-            std::cerr << "Cannot find sdf element." << std::endl;
-            return flowerPotLocations;
-        }
-
-        tinyxml2::XMLElement* world = sdf->FirstChildElement("world");
-        if (!world) {
-            std::cerr << "Cannot find world element." << std::endl;
-            return flowerPotLocations;
-        }
-
-        tinyxml2::XMLElement* state = world->FirstChildElement("state");
-        if (!state) {
-            std::cerr << "Cannot find state element." << std::endl;
-            return flowerPotLocations;
-        }
-
-
-        // Get all "model" elements inside it
-        tinyxml2::XMLElement* model = state->FirstChildElement("model");
-        while (model) {
-            const char* name = model->Attribute("name");
-            if (name && std::string(name).find("Cole_Hardware") != std::string::npos) {
-                tinyxml2::XMLElement* pose = model->FirstChildElement("pose");
-                if (pose) {
-                    std::string poseStr = pose->GetText();
-
-                    //flowerPotLocations.emplace_back(poseStr.at(0), poseStr.at(1));
-                    
-                    std::istringstream iss(poseStr);
-                    float x, y, z, roll, pitch, yaw;
-                    if (iss >> x >> y >> z >> roll >> pitch >> yaw) {
-                        flowerPotLocations.emplace_back(x, y);
-                    }
-                }
-            }
-            model = model->NextSiblingElement("model");
-        }
-
-        if (flowerPotLocations.empty()) {
-            std::cout << "No flower pots found in the file." << std::endl;
-        }
-
-        return flowerPotLocations;
     }
 
     void odomCallback(const nav_msgs::Odometry::ConstPtr& msg) {
@@ -397,31 +319,6 @@ public:
 
         return planned_path;
     }
-
-    // void sendGoal(const geometry_msgs::Point& position, const geometry_msgs::Quaternion& orientation) {
-    //     move_base_msgs::MoveBaseGoal goal;
-        
-    //     // Set up the frame parameters
-    //     goal.target_pose.header.frame_id = "map";
-    //     goal.target_pose.header.stamp = ros::Time::now();
-        
-    //     // Set the position
-    //     goal.target_pose.pose.position = position;
-    //     goal.target_pose.pose.orientation = orientation;
-        
-    //     ROS_INFO("Sending goal: x=%f, y=%f", position.x, position.y);
-    //     ac_->sendGoal(goal);
-
-    //     // Wait an infinite time for the results
-    //     ac->waitForResult();
-
-    //     if (ac->getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
-    //         ROS_INFO("Hooray, the robot reached goal %d!", i + 1);
-    //     } else {
-    //         ROS_INFO("The robot failed to reach goal %d", i + 1);
-    //     }
-    // }
-
 
     bool goToGoals() {
         
