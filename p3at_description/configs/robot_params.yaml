@@ -1,0 +1,12 @@
+robot_name: "pioneer3at"
+spawn_x: &spawn_x -5.00796
+spawn_y: &spawn_y 2.33341
+spawn_z: 0.169994
+spawn_roll: 0.000035
+spawn_pitch: 0
+spawn_yaw: &spawn_yaw 4.71
+
+amcl:
+  initial_pose_x: *spawn_x
+  initial_pose_y: *spawn_y
+  initial_pose_a: *spawn_yaw
