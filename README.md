@@ -4,11 +4,11 @@
 
 ## Team
 
-- **Ahmad Kamal Baig** - Simulation and Integration Lead
+- [**Ahmad Kamal Baig**](https://github.com/akbaig) - Simulation and Integration Lead
 - **Irving Perez** - Simulation and Modeling Expert
-- **Joaquin Caballero** - Project Manager
-- **Jose David Perez** - Documentation and Presentation Lead
-- **Umar Faruk Abdullahi** - Control Lead
+- [**Joaquin Caballero**](https://github.com/Joaquinecc) - Project Manager
+- [**Jose David Perez**](https://github.com/jd-perez96) - Documentation and Presentation Lead
+- [**Umar Faruk Abdullahi**](https://github.com/ufakz) - Control Lead
 
 ## Installation
 
