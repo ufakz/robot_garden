@@ -1,22 +1,23 @@
 <?xml version="1.0"?>
 
 <launch>
+  <!-- Enable simulated time -->
+  <param name="use_sim_time" value="true" />
+
+  <!-- Arguments -->
   <arg name="world_file" default="$(find p3at_gazebo)/worlds/garden.world"/>
-  <arg name="spawn_x" default="-5.00796"/>
-  <arg name="spawn_y" default="2.33341"/>
-  <arg name="spawn_z" default="0.169994"/>
-  <arg name="spawn_roll" default="0.000035"/>
-  <arg name="spawn_pitch" default="0"/>
-  <arg name="spawn_yaw" default="4.71"/>
+  <!-- Load robot params -->
+  <rosparam command="load" file="$(find p3at_description)/configs/robot_params.yaml" />
 
-
+  <!-- Launch Gazebo -->
   <node name="gazebo" pkg="gazebo_ros" type="gzserver" args="$(arg world_file)" respawn="false" output="screen"/>
   <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen"/>
 
+  <!-- Robot description -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find p3at_description)/urdf/pioneer3at.urdf.xacro' robot_name:='/'" />
+  <node name="spawn_robot" pkg="p3at_description" type="spawn_robot.py" output="screen"/>
   
-  <param name="robot_description" command="$(find xacro)/xacro '$(find p3at_description)/urdf/pioneer3at.urdf.xacro' robot_name:='/' " />
-  <node pkg="gazebo_ros" type="spawn_model" name="spawn_model" args="-urdf -param /robot_description -model pioneer3at -x $(arg spawn_x) -y $(arg spawn_y) -z $(arg spawn_z) -R $(arg spawn_roll) -P $(arg spawn_pitch) -Y $(arg spawn_yaw)"/>
-
+  <!-- Publishers -->
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" respawn="false" output="screen"/>
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
 

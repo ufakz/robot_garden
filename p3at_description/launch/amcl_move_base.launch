@@ -6,7 +6,8 @@
   <include file="$(find p3at_description)/launch/garden_world_mapping.launch"/>
 
   <!-- Launch AMCL -->
-  <include file="$(find p3at_description)/launch/amcl_map_server.launch"/>
+  <include file="$(find p3at_description)/launch/provide_map.launch" />
+  <include file="$(find p3at_description)/launch/amcl.launch" />
 
   <!-- Launch Move Base -->
   <include file="$(find p3at_description)/launch/move_base.launch"/>

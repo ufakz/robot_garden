@@ -4,11 +4,11 @@
 
 ## Team
 
-- **Ahmad Kamal Baig** - Simulation and Integration Lead
+- [**Ahmad Kamal Baig**](https://github.com/akbaig) - Simulation and Integration Lead
 - **Irving Perez** - Simulation and Modeling Expert
-- **Joaquin Caballero** - Project Manager
-- **Jose David Perez** - Documentation and Presentation Lead
-- **Umar Faruk Abdullahi** - Control Lead
+- [**Joaquin Caballero**](https://github.com/Joaquinecc) - Project Manager
+- [**Jose David Perez**](https://github.com/jd-perez96) - Documentation and Presentation Lead
+- [**Umar Faruk Abdullahi**](https://github.com/ufakz) - Control Lead
 
 ## Installation
 
@@ -65,7 +65,8 @@ sudo apt install ros-neotic-navigation
     catkin_make install
     ```
 
-5. **Start the ROS Core**  
+5. **Start the ROS Core** (Optional)
+
    In a terminal, start the ROS core:
 
     ```bash
@@ -81,22 +82,36 @@ sudo apt install ros-neotic-navigation
     roslaunch p3at_description garden_world.launch
     ```
 
-7. **Launch the control node**  
-   In a separate terminal, run the control node for the robot:
+8. **AMCL with move_base** (Navigation Pre-requisites)
 
-    ```bash
-    cd ~/robot_garden
-    source install/setup.bash
-    rosrun p3at_plugin p3at
-    ```
-
-8. **AMCL with move_base**
-
-   To run environment with AMCL and move_base packages:
+   To run navigation algorithms using AMCL and Move Base, launch in separate terminal:
 
    ```bash
-   roslaunch p3at_description amcl_move_base.launch
+   cd ~/robot_garden
+   source install/setup.bash
+   roslaunch p3at_description navigation_main.launch
    ```
+
+7. **Launch the control node**  
+   In a separate terminal, run the (waypoint following) control node for the robot:
+
+   ```bash
+   cd ~/robot_garden
+   source install/setup.bash
+   rosrun p3at_plugin waypoint_following_movebase
+   ```
+
+   Note that this requires running **step 7** before. If you don't want to do that, try our completely reactive control node:
+
+   ```
+   rosrun p3at_plugin waypoint_following_custom 
+   ```
+
+   Alternatively, you can also use the **path planning** control node:
+
+    ```
+   rosrun p3at_plugin path_planning_movebase 
+   ``` 
 
 ### Troubleshooting
 

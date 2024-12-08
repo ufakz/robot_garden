@@ -1,15 +1,35 @@
 amcl:
+  # use_map_topic: $(arg use_map_topic)
+  odom_model_type: omni-corrected
+  odom_alpha1: 0.005
+  odom_alpha2: 0.00005
+  odom_alpha3: 0.01
+  odom_alpha4: 0.005
+  odom_alpha5: 0.003
+  gui_publish_rate: 10.0
+  laser_max_beams: 60
+  laser_max_range: 12.0
   min_particles: 500
   max_particles: 2000
   kld_err: 0.05
   kld_z: 0.99
-  update_min_d: 0.2
-  update_min_a: 0.2
-  resample_interval: 1
-  transform_tolerance: 0.1
-  recovery_alpha_slow: 0.001
-  recovery_alpha_fast: 0.1
+  laser_z_hit: 0.5
+  laser_z_short: 0.05
+  laser_z_max: 0.05
+  laser_z_rand: 0.5
+  laser_sigma_hit: 0.2
   laser_lambda_short: 0.1
-  initial_pose_x: -5.00796
-  initial_pose_y: 2.33341
-  initial_pose_a: 4.71
+  laser_model_type: likelihood_field  # Or beam, depending on your need
+  laser_likelihood_max_dist: 2.0
+  update_min_d: 0.25
+  update_min_a: 0.2
+  odom_frame_id: odom
+  base_frame_id: base_footprint
+  resample_interval: 1
+  transform_tolerance: 2.0
+  recovery_alpha_slow: 0.0
+  recovery_alpha_fast: 0.0
+  # initial_pose_x: $(param /spawn_x)
+  # initial_pose_y: $(param /spawn_y)
+  # initial_pose_a: $(param /spawn_yaw)
+  # scan_topic: $(arg scan_topic)
