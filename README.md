@@ -2,6 +2,12 @@
 
 **Robot Garden** is a project developed for the Mobile Robots course in the Master's in Intelligent Systems program at the University of the Balearic Islands. This project involves simulating, controlling, and modeling a robotic system capable of navigating and interacting with a structured environment—similar to an automated garden or maintenance robot.
 
+
+
+https://github.com/user-attachments/assets/bcef8630-114c-4a92-aa83-3e7ed4e79127
+
+
+
 ## Team
 
 - [**Ahmad Kamal Baig**](https://github.com/akbaig) - Simulation and Integration Lead
